@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <i class="bi bi-book me-2"></i>Recipe Extractor
+    </a>
+    <button class="navbar-toggler" type="button" (click)="toggleMenu()" 
+            aria-controls="navbarNav" [attr.aria-expanded]="!isMenuCollapsed" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" [ngClass]="{'show': !isMenuCollapsed}" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuCollapsed = true">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/upload" routerLinkActive="active" (click)="isMenuCollapsed = true">Upload Recipe</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/search" routerLinkActive="active" (click)="isMenuCollapsed = true">Search Recipes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/meal-planner" routerLinkActive="active" (click)="isMenuCollapsed = true">Meal Planner</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/saved-meal-plans" routerLinkActive="active" (click)="isMenuCollapsed = true">Saved Plans</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/settings" routerLinkActive="active" (click)="isMenuCollapsed = true">
+            <i class="bi bi-gear"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

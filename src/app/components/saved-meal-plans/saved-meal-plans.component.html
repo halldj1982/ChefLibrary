@@ -1,0 +1,28 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Saved Meal Plans</h2>
+  
+  <!-- Loading Spinner -->
+  <app-loading-spinner *ngIf="isLoading" message="Loading meal plans..."></app-loading-spinner>
+  
+  <!-- No Plans Message -->
+  <div *ngIf="!isLoading && mealPlans.length === 0" class="text-center my-5">
+    <p>You don't have any saved meal plans yet.</p>
+    <button class="btn btn-primary" routerLink="/meal-planner">Create a Meal Plan</button>
+  </div>
+  
+  <!-- Meal Plan Cards -->
+  <div class="row row-cols-1 row-cols-md-2 g-4" *ngIf="!isLoading && mealPlans.length > 0">
+    <div class="col" *ngFor="let plan of mealPlans">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ plan.name }}</h5>
+          <p class="card-text">{{ plan.summary }}</p>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          <button class="btn btn-sm btn-primary" [routerLink]="['/meal-plan', plan.id]">View</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteMealPlan(plan.id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,122 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Search Recipes</h2>
+  
+  <!-- Search Form -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="searchQuery" class="form-label">Search</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="searchQuery" 
+            placeholder="Search recipes..." 
+            [(ngModel)]="searchQuery">
+        </div>
+        
+        <div class="col-md-6">
+          <label for="mealType" class="form-label">Meal Type</label>
+          <select class="form-select" id="mealType" [(ngModel)]="selectedMealType">
+            <option value="">All Meal Types</option>
+            <option *ngFor="let type of mealTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="cuisine" class="form-label">Cuisine</label>
+          <select class="form-select" id="cuisine" [(ngModel)]="selectedCuisine">
+            <option value="">All Cuisines</option>
+            <option *ngFor="let cuisine of cuisines" [value]="cuisine">{{ cuisine }}</option>
+          </select>
+        </div>
+        
+        <div class="col-md-6">
+          <label for="dietary" class="form-label">Dietary Restrictions</label>
+          <select class="form-select" id="dietary" [(ngModel)]="selectedDietaryOption">
+            <option value="">None</option>
+            <option *ngFor="let option of dietaryOptions" [value]="option">{{ option }}</option>
+          </select>
+        </div>
+        
+        <div class="col-12 text-center">
+          <button class="btn btn-primary me-2" (click)="searchRecipes()">Search</button>
+          <button class="btn btn-outline-secondary" (click)="loadRandomRecipes()">Random Recipes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading Spinner -->
+  <app-loading-spinner *ngIf="isLoading" message="Searching recipes..."></app-loading-spinner>
+  
+  <!-- Results -->
+  <div *ngIf="!isLoading">
+    <h3 *ngIf="recipes.length === 0" class="text-center my-5">No recipes found. Try a different search.</h3>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <div class="col" *ngFor="let recipe of recipes">
+        <div class="card h-100 recipe-card" (click)="openRecipeDetails(recipe)">
+          <div class="card-body">
+            <h5 class="card-title">{{ recipe.title }}</h5>
+            <p class="card-text">
+              <span class="badge bg-primary me-1" *ngIf="recipe.mealType && recipe.mealType.length > 0">
+                {{ getMealType(recipe) }}
+              </span>
+              <span class="badge bg-secondary me-1" *ngIf="recipe.cuisine">{{ recipe.cuisine }}</span>
+            </p>
+            <p class="card-text" *ngIf="recipe.totalTime">
+              <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>{{ recipe.totalTime }}
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recipe Detail Modal -->
+  <div class="modal" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'" tabindex="-1" (click)="closeModal()">
+    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-content" *ngIf="selectedRecipe">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ selectedRecipe.title }}</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p *ngIf="selectedRecipe.prepTime"><strong>Prep Time:</strong> {{ selectedRecipe.prepTime }}</p>
+              <p *ngIf="selectedRecipe.cookTime"><strong>Cook Time:</strong> {{ selectedRecipe.cookTime }}</p>
+              <p *ngIf="selectedRecipe.totalTime"><strong>Total Time:</strong> {{ selectedRecipe.totalTime }}</p>
+            </div>
+            <div class="col-md-6">
+              <p *ngIf="selectedRecipe.servings"><strong>Servings:</strong> {{ selectedRecipe.servings }}</p>
+              <p *ngIf="selectedRecipe.cuisine"><strong>Cuisine:</strong> {{ selectedRecipe.cuisine }}</p>
+              <p *ngIf="selectedRecipe.dietaryInfo && selectedRecipe.dietaryInfo.length > 0">
+                <strong>Dietary Info:</strong> 
+                <span *ngFor="let info of getDietaryInfo(selectedRecipe)" class="badge bg-success me-1">{{ info }}</span>
+              </p>
+            </div>
+          </div>
+          
+          <h6>Ingredients:</h6>
+          <ul>
+            <li *ngFor="let ingredient of selectedRecipe.ingredients">{{ ingredient }}</li>
+          </ul>
+          
+          <h6>Instructions:</h6>
+          <ol>
+            <li *ngFor="let step of selectedRecipe.instructions">{{ step }}</li>
+          </ol>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-sm me-2" (click)="deleteRecipe()">Delete</button>
+          <button type="button" class="btn btn-success" (click)="closeModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showModal"></div>
+</div>

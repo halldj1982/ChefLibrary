@@ -1,0 +1,19 @@
+.recipe-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.modal-backdrop {
+  opacity: 0.5;
+}
+
+/* Fix for Bootstrap modal scrollbar issue */
+body.modal-open {
+  padding-right: 0 !important;
+  overflow: auto !important;
+}

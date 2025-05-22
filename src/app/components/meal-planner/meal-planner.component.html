@@ -1,0 +1,119 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Meal Planner</h2>
+  
+  <!-- Initial Query Form -->
+  <div class="card mb-4" *ngIf="!mealPlan">
+    <div class="card-body">
+      <h5 class="card-title">Create a Meal Plan</h5>
+      <div class="mb-3">
+        <label for="planQuery" class="form-label">What kind of meal plan would you like?</label>
+        <textarea 
+          class="form-control" 
+          id="planQuery" 
+          rows="3" 
+          placeholder="E.g., A vegetarian meal plan for 3 days with Mediterranean dishes"
+          [(ngModel)]="planQuery"></textarea>
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary" (click)="generateMealPlan()" [disabled]="isLoading">
+          Generate Plan
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading Spinner -->
+  <app-loading-spinner *ngIf="isLoading" message="Creating your meal plan..."></app-loading-spinner>
+  
+  <!-- Meal Plan Display -->
+  <div *ngIf="mealPlan && !isLoading">
+    <!-- Adjustment Query -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="mb-3">
+          <label for="adjustmentQuery" class="form-label">Adjust your meal plan</label>
+          <textarea 
+            class="form-control" 
+            id="adjustmentQuery" 
+            rows="2" 
+            placeholder="E.g., Replace dinner with something lighter"
+            [(ngModel)]="adjustmentQuery"></textarea>
+        </div>
+        <div class="text-center">
+          <button class="btn btn-primary" (click)="adjustMealPlan()" [disabled]="isAdjusting">
+            Adjust Plan
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Meal Cards -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
+      <div class="col" *ngFor="let meal of mealPlan.meals">
+        <div class="card h-100">
+          <div class="card-header bg-primary text-white">
+            {{ meal.timeSlot }}
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="getRecipeForMeal(meal)">
+              <h5 class="card-title">{{ getRecipeForMeal(meal)?.title }}</h5>
+              <p class="card-text">
+                <span class="badge bg-secondary me-1" *ngIf="getRecipeForMeal(meal)?.cuisine">
+                  {{ getRecipeForMeal(meal)?.cuisine }}
+                </span>
+                <span class="badge bg-info me-1" *ngIf="getRecipeForMeal(meal)?.mealType">
+                  {{ getMealType(getRecipeForMeal(meal)!) }}
+                </span>
+              </p>
+              <p class="card-text" *ngIf="getRecipeForMeal(meal)?.totalTime">
+                <small class="text-muted">
+                  <i class="bi bi-clock me-1"></i>{{ getRecipeForMeal(meal)?.totalTime }}
+                </small>
+              </p>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Reasoning and Features -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">About This Meal Plan</h5>
+      </div>
+      <div class="card-body">
+        <h6>Summary</h6>
+        <p>{{ mealPlan.summary }}</p>
+        
+        <h6>Reasoning</h6>
+        <p>{{ mealPlan.reasoning }}</p>
+        
+        <h6>Features</h6>
+        <ul>
+          <li *ngFor="let feature of mealPlan.features">{{ feature }}</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Save Controls -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <label for="planName" class="form-label">Plan Name</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="planName" 
+              placeholder="Enter a name for your meal plan"
+              [(ngModel)]="mealPlan.name">
+          </div>
+          <div class="col-md-6 d-flex align-items-end">
+            <button class="btn btn-success me-2" (click)="saveMealPlan()" [disabled]="!mealPlan.name">Save</button>
+            <button class="btn btn-secondary" (click)="cancelPlan()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

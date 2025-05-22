@@ -1,0 +1,138 @@
+<div class="upload-container">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0"><i class="bi bi-upload me-2"></i>Upload Recipe Photo</h2>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-4">
+            <h4>Instructions</h4>
+            <ol>
+              <li>Take a clear photo of your recipe</li>
+              <li>Make sure the text is readable</li>
+              <li>Upload the photo using the form</li>
+              <li>Our AI will extract and analyze the recipe</li>
+            </ol>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipeImage" class="form-label">Select Recipe Image</label>
+            <input 
+              type="file" 
+              class="form-control" 
+              id="recipeImage" 
+              accept="image/*" 
+              (change)="onFileSelected($event)"
+              [disabled]="isLoading">
+          </div>
+
+          <div class="d-grid gap-2">
+            <button 
+              class="btn btn-primary" 
+              (click)="uploadRecipe()" 
+              [disabled]="!selectedFile || isLoading">
+              <i class="bi bi-cloud-arrow-up me-2"></i>Process Recipe
+            </button>
+            <button 
+              class="btn btn-outline-secondary" 
+              (click)="resetForm()" 
+              [disabled]="isLoading">
+              <i class="bi bi-x-circle me-2"></i>Reset
+            </button>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+            {{ errorMessage }}
+          </div>
+
+          <div *ngIf="isLoading" class="mt-4">
+            <p><strong>{{ processingStep }}</strong></p>
+            <div class="progress">
+              <div 
+                class="progress-bar progress-bar-striped progress-bar-animated" 
+                role="progressbar" 
+                [style.width.%]="uploadProgress" 
+                [attr.aria-valuenow]="uploadProgress" 
+                aria-valuemin="0" 
+                aria-valuemax="100">
+                {{ uploadProgress }}%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="image-preview-container">
+            <div *ngIf="!imagePreview" class="image-placeholder">
+              <i class="bi bi-image"></i>
+              <p>Image preview will appear here</p>
+            </div>
+            <img *ngIf="imagePreview" [src]="imagePreview" alt="Recipe Preview" class="img-fluid rounded">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-header bg-light">
+      <h3 class="mb-0">How It Works</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="text-center mb-3">
+            <i class="bi bi-camera feature-icon"></i>
+            <h4>Upload</h4>
+            <p>Upload a clear photo of your recipe from a cookbook, recipe card, or handwritten note.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-center mb-3">
+            <i class="bi bi-braces feature-icon"></i>
+            <h4>Extract</h4>
+            <p>Our AI extracts the text and structures it into ingredients, instructions, and metadata.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="text-center mb-3">
+            <i class="bi bi-database feature-icon"></i>
+            <h4>Store</h4>
+            <p>The recipe is stored in your searchable database for easy access and meal planning.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Duplicate Recipe Modal -->
+  <div class="modal" [class.show]="showDuplicateModal" [style.display]="showDuplicateModal ? 'block' : 'none'" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Duplicate Recipe Detected
+          </h5>
+        </div>
+        <div class="modal-body">
+          <p>A recipe with the name "<strong>{{ extractedRecipe?.title }}</strong>" already exists in your collection.</p>
+          <p>What would you like to do?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="replaceRecipe()">
+            <i class="bi bi-arrow-repeat me-1"></i> Replace Existing
+          </button>
+          <button type="button" class="btn btn-success" (click)="addAsNew()">
+            <i class="bi bi-plus-circle me-1"></i> Add as New
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelUpload()">
+            <i class="bi bi-x-circle me-1"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop fade show" *ngIf="showDuplicateModal"></div>
+</div>

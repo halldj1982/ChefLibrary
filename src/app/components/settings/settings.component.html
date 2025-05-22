@@ -1,0 +1,42 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2>Settings</h2>
+    </div>
+    <div class="card-body">
+      <div class="mb-4">
+        <h3>Database Management</h3>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Reindex Recipes</h5>
+                <p class="card-text">Update all recipes in the database with the current metadata structure.</p>
+                <button class="btn btn-primary" (click)="reindexAllRecipes()" [disabled]="isLoading">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Reindex All Recipes
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Clear Database</h5>
+                <p class="card-text">Delete all recipes from both DynamoDB and Pinecone databases.</p>
+                <button class="btn btn-danger" (click)="clearAllRecipes()" [disabled]="isLoading">
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Clear All Recipes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="message" class="alert mt-3" [ngClass]="{'alert-success': !isError, 'alert-danger': isError}">
+        {{ message }}
+      </div>
+    </div>
+  </div>
+</div>

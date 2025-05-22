@@ -1,0 +1,22 @@
+.footer {
+  margin-top: 3rem;
+  padding: 2rem 0;
+  
+  h5 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  ul li {
+    margin-bottom: 0.5rem;
+  }
+  
+  a {
+    color: #4a6fa5;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #3a5a8a;
+    }
+  }
+}
