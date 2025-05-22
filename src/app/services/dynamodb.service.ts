@@ -19,9 +19,9 @@ export class DynamoDBService {
     this.mealPlanTable = `${this.envService.dynamoDbTable}-meal-plans`;
     
     AWS.config.update({
-      region: this.envService.awsRegion,
-      accessKeyId: this.envService.awsAccessKeyId,
-      secretAccessKey: this.envService.awsSecretAccessKey
+      region: this.envService.myAwsRegion,
+      accessKeyId: this.envService.myAwsAccessKeyId,
+      secretAccessKey: this.envService.myAwsSecretAccessKey
     });
     this.docClient = new AWS.DynamoDB.DocumentClient();
   }

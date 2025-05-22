@@ -44,16 +44,16 @@ export class EnvironmentService {
     return this.getValue('openaiApiKey');
   }
   
-  get awsRegion(): string {
-    return this.getValue('awsRegion');
+  get myAwsRegion(): string {
+    return this.getValue('myAwsRegion');
   }
   
-  get awsAccessKeyId(): string {
-    return this.getValue('awsAccessKeyId');
+  get myAwsAccessKeyId(): string {
+    return this.getValue('myAwsAccessKeyId');
   }
   
-  get awsSecretAccessKey(): string {
-    return this.getValue('awsSecretAccessKey');
+  get myAwsSecretAccessKey(): string {
+    return this.getValue('myAwsSecretAccessKey');
   }
   
   get dynamoDbTable(): string {

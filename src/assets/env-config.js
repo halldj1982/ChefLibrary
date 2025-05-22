@@ -4,8 +4,8 @@ window.env = {
   pineconeIndex: '#{pineconeIndex}',
   pineconeNamespace: '#{pineconeNamespace}',
   openaiApiKey: '#{openaiApiKey}',
-  awsRegion: '#{awsRegion}',
-  awsAccessKeyId: '#{awsAccessKeyId}',
-  awsSecretAccessKey: '#{awsSecretAccessKey}',
+  myAwsRegion: '#{myAwsRegion}',
+  myAwsAccessKeyId: '#{myAwsAccessKeyId}',
+  myAwsSecretAccessKey: '#{myAwsSecretAccessKey}',
   dynamoDbTable: '#{dynamoDbTable}'
 };
