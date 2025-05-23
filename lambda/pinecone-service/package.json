@@ -1,11 +1,12 @@
 {
   "name": "pinecone-service",
   "version": "1.0.0",
-  "description": "Lambda function for Pinecone operations",
+  "description": "Lambda function for Pinecone operations with enhanced logging",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "package": "npm run build && cd dist && tar acvf function.zip ."
+    "package": "npm run build && cd dist && tar acvf function.zip .",
+    "test": "jest"
   },
   "dependencies": {
     "@pinecone-database/pinecone": "^1.1.0",
@@ -13,7 +14,20 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.126",
+    "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
     "typescript": "^5.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "env": {
+    "DEBUG_LOGGING": {
+      "description": "Set to 'true' to enable debug level logging",
+      "default": "false"
+    }
   }
 }

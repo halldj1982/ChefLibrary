@@ -1,6 +1,57 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { Pinecone } from '@pinecone-database/pinecone';
 
+// Configure logging utility
+type Logger = {
+  info: (message: string, data?: any) => void;
+  error: (message: string, error?: any) => void;
+  warn: (message: string, data?: any) => void;
+  debug: (message: string, data?: any) => void;
+};
+
+const logger: Logger = {
+  info: (message: string, data?: any) => {
+    console.log(JSON.stringify({
+      level: 'INFO',
+      timestamp: new Date().toISOString(),
+      message,
+      data: data || {}
+    }));
+  },
+  error: (message: string, error?: any) => {
+    console.error(JSON.stringify({
+      level: 'ERROR',
+      timestamp: new Date().toISOString(),
+      message,
+      error: error ? (error.stack || error.message || String(error)) : undefined
+    }));
+  },
+  warn: (message: string, data?: any) => {
+    console.warn(JSON.stringify({
+      level: 'WARN',
+      timestamp: new Date().toISOString(),
+      message,
+      data: data || {}
+    }));
+  },
+  debug: (message: string, data?: any) => {
+    if (process.env.DEBUG_LOGGING === 'true') {
+      console.log(JSON.stringify({
+        level: 'DEBUG',
+        timestamp: new Date().toISOString(),
+        message,
+        data: data || {}
+      }));
+    }
+  }
+};
+
+logger.info('Initializing Pinecone service', {
+  environment: process.env.PINECONE_ENVIRONMENT,
+  index: process.env.PINECONE_INDEX,
+  namespace: process.env.PINECONE_NAMESPACE
+});
+
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY || '',
   environment: process.env.PINECONE_ENVIRONMENT || ''
@@ -10,16 +61,33 @@ const index = pinecone.index(process.env.PINECONE_INDEX || '');
 const namespace = process.env.PINECONE_NAMESPACE || '';
 
 const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,DELETE',
-  'Access-Control-Allow-Headers': 'Content-Type'
+  'Access-Control-Allow-Origin': 'https://main.dwu6818qyj5l0.amplifyapp.com',
+  'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
+  'Access-Control-Allow-Headers': 'content-type,origin,x-requested-with,accept,authorization',
+  'Access-Control-Allow-Credentials': 'true',
+  'Content-Type': 'application/json'
 };
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  // Log incoming request
+  logger.info('Received API request', {
+    httpMethod: event.httpMethod,
+    path: event.path,
+    queryParams: event.queryStringParameters,
+    requestId: event.requestContext?.requestId,
+    sourceIp: event.requestContext?.identity?.sourceIp
+  });
+  
+  logger.debug('Request details', { 
+    headers: event.headers,
+    body: event.body ? JSON.parse(event.body) : null 
+  });
+
   try {
     const { httpMethod, body, queryStringParameters } = event;
 
     if (httpMethod === 'OPTIONS') {
+      logger.debug('Handling OPTIONS request');
       return { statusCode: 200, headers, body: '' };
     }
 
@@ -28,6 +96,11 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         const requestData = JSON.parse(body || '');
         
         if (requestData.action === 'store') {
+          logger.info('Processing store action', { 
+            recipeId: requestData.recipe.id,
+            title: requestData.recipe.title
+          });
+          
           await index.namespace(namespace).upsert([{
             id: requestData.recipe.id,
             values: requestData.recipe.embedding,
@@ -39,12 +112,16 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
               ingredients: requestData.recipe.ingredients.join(',')
             }
           }]);
+          
+          logger.info('Recipe stored successfully', { recipeId: requestData.recipe.id });
           return { statusCode: 200, headers, body: JSON.stringify({ message: 'Recipe stored successfully' }) };
         }
         
         if (requestData.action === 'search') {
           // Check if searching by title
           if (requestData.title) {
+            logger.info('Processing title search', { title: requestData.title });
+            
             // Search by title using metadata filter
             const queryParams = {
               vector: new Array(1536).fill(0), // Dummy vector
@@ -55,12 +132,23 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
                 title: { $eq: requestData.title }
               }
             };
+            
             const results = await index.namespace(namespace).query(queryParams);
+            logger.info('Title search completed', { 
+              title: requestData.title,
+              resultsCount: results.matches.length 
+            });
+            
             return { statusCode: 200, headers, body: JSON.stringify(results.matches) };
           }
 
           // Search by vector similarity
           const { embedding, limit = 10, filters } = requestData;
+          logger.info('Processing vector search', { 
+            limit,
+            filters: filters || 'none'
+          });
+          
           const queryParams: any = {
             vector: embedding,
             topK: limit,
@@ -75,28 +163,41 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             if (filters.dietaryInfo) filterConditions.dietaryInfo = { $eq: filters.dietaryInfo };
             if (Object.keys(filterConditions).length > 0) {
               queryParams.filter = filterConditions;
+              logger.debug('Applied filters', { filterConditions });
             }
           }
 
           const results = await index.namespace(namespace).query(queryParams);
+          logger.info('Vector search completed', { resultsCount: results.matches.length });
           return { statusCode: 200, headers, body: JSON.stringify(results.matches) };
         }
         break;
 
       case 'DELETE':
         const recipeId = queryStringParameters?.recipeId;
-        if (!recipeId) throw new Error('Recipe ID is required');
+        if (!recipeId) {
+          logger.error('Missing recipe ID in DELETE request');
+          throw new Error('Recipe ID is required');
+        }
+        
+        logger.info('Processing delete request', { recipeId });
         await index.namespace(namespace).deleteOne(recipeId);
+        logger.info('Recipe deleted successfully', { recipeId });
         return { statusCode: 200, headers, body: JSON.stringify({ message: 'Recipe deleted successfully' }) };
     }
 
+    logger.info('Invalid request received', { httpMethod, action: JSON.parse(body || '{}').action });
     return { statusCode: 400, headers, body: JSON.stringify({ message: 'Invalid request' }) };
   } catch (error: any) {
-    console.error('Error:', error);
+    logger.error('Error processing request', error);
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ message: 'Internal server error', error: error.message })
+      body: JSON.stringify({ 
+        message: 'Internal server error', 
+        error: error.message,
+        requestId: event.requestContext?.requestId
+      })
     };
   }
 };
