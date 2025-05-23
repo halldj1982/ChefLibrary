@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
-            "outputPath": "dist/recipe-extractor-app",
+            "outputPath": "dist/chef-lib",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [

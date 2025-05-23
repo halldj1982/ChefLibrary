@@ -2,4 +2,3 @@
 /.angular
 /terraform
 /lambda/pinecone-service/node_modules
-/lambda/pinecone-service/dist
