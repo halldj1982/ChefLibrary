@@ -6,14 +6,15 @@ import { environment } from '../../environments/environment';
 })
 export class EnvironmentService {
   getValue(key: string, defaultValue: string = ''): string {
-    if (environment && environment[key]) {
-      return environment[key];
-    }
     
     // @ts-ignore
     if (window.env && window.env[key]) {
       // @ts-ignore
       return window.env[key];
+    }
+
+    if (environment && environment[key]) {
+      return environment[key];
     }
     
     return defaultValue;
