@@ -28,16 +28,8 @@ export class EnvironmentService {
     return defaultValue;
   }
   
-  get pineconeApiKey(): string {
-    return this.getValue('pineconeApiKey');
-  }
-  
-  get pineconeIndex(): string {
-    return this.getValue('pineconeIndex');
-  }
-  
-  get pineconeNamespace(): string {
-    return this.getValue('pineconeNamespace');
+  get pineconeApiUrl(): string {
+    return this.getValue('pineconeApiUrl');
   }
   
   get openaiApiKey(): string {

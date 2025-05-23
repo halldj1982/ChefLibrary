@@ -1,0 +1,19 @@
+{
+  "name": "pinecone-service",
+  "version": "1.0.0",
+  "description": "Lambda function for Pinecone operations",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "package": "npm run build && cd dist && tar acvf function.zip ."
+  },
+  "dependencies": {
+    "@pinecone-database/pinecone": "^1.1.0",
+    "aws-lambda": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.126",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
