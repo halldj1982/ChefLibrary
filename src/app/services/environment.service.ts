@@ -10,6 +10,8 @@ export class EnvironmentService {
     // @ts-ignore
     if (window.env && window.env[key]) {
       // @ts-ignore
+      console.log("Current window.env: " + JSON.stringify(window.env));
+      // @ts-ignore
       return window.env[key];
     }
 
