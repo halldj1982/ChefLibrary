@@ -20,6 +20,7 @@ export class EnvironmentService {
   }
   
   get pineconeApiUrl(): string {
+    console.log("Returning Value from get pineconeApiUrl: " + this.getValue('pineconeApiUrl'));
     return this.getValue('pineconeApiUrl');
   }
   
