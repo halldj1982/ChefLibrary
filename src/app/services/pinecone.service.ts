@@ -66,6 +66,18 @@ export class PineconeService {
   }
 
   /**
+   * Find recipes by title
+   * @param title Recipe title to search for
+   * @returns Observable with search results
+   */
+  findRecipesByTitle(title: string): Observable<any> {
+    return this.http.post(this.apiUrl, {
+      action: 'search',
+      title
+    });
+  }
+
+  /**
    * Delete recipe embedding from Pinecone via Lambda
    * @param recipeId Recipe ID to delete
    * @returns Observable with operation result

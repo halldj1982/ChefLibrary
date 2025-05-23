@@ -1,19 +1,10 @@
 import { Injectable } from '@angular/core';
-
-// Try to import environment, but it might not exist in production
-let environment: any;
-try {
-  environment = require('../../environments/environment').environment;
-} catch (e) {
-  // In production, environment file might not exist
-  environment = {};
-}
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EnvironmentService {
-  // Get value from environment file or from window.env (set by Amplify)
   getValue(key: string, defaultValue: string = ''): string {
     if (environment && environment[key]) {
       return environment[key];

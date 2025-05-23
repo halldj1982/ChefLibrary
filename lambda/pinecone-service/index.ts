@@ -43,6 +43,23 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         }
         
         if (requestData.action === 'search') {
+          // Check if searching by title
+          if (requestData.title) {
+            // Search by title using metadata filter
+            const queryParams = {
+              vector: new Array(1536).fill(0), // Dummy vector
+              topK: 10,
+              includeMetadata: true,
+              includeValues: false,
+              filter: {
+                title: { $eq: requestData.title }
+              }
+            };
+            const results = await index.namespace(namespace).query(queryParams);
+            return { statusCode: 200, headers, body: JSON.stringify(results.matches) };
+          }
+
+          // Search by vector similarity
           const { embedding, limit = 10, filters } = requestData;
           const queryParams: any = {
             vector: embedding,
