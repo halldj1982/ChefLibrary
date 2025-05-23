@@ -55,8 +55,8 @@ export class PineconeService {
       cuisine?: string,
       mealType?: string,
       dietaryInfo?: string
-    }
-  ): Observable<any> {
+    }): Observable<any> {
+      console.log("Calling Pinecone Lambda Api at url " + this.apiUrl);
     return this.http.post(this.apiUrl, {
       action: 'search',
       embedding,
