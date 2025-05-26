@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 const pinecone_1 = require("@pinecone-database/pinecone");
-// Configure logging utility
 const logger = {
     info: (message, data) => {
         console.log(JSON.stringify({
@@ -50,13 +49,7 @@ const pinecone = new pinecone_1.Pinecone({
 });
 const index = pinecone.index(process.env.PINECONE_INDEX || '');
 const namespace = process.env.PINECONE_NAMESPACE || '';
-const headers = {
-    'Access-Control-Allow-Origin': 'https://main.dwu6818qyj5l0.amplifyapp.com',
-    'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
-    'Access-Control-Allow-Headers': 'content-type,origin,x-requested-with,accept,authorization',
-    'Access-Control-Allow-Credentials': 'true',
-    'Content-Type': 'application/json'
-};
+// Removed getResponseHeaders function as we're handling headers directly in the handler
 const handler = async (event) => {
     // Log incoming request
     logger.info('Received API request', {
@@ -66,19 +59,51 @@ const handler = async (event) => {
         requestId: event.requestContext?.requestId,
         sourceIp: event.requestContext?.identity?.sourceIp
     });
+    // Get origin from request headers
+    const origin = event.headers?.origin || event.headers?.Origin || 'https://main.dymhmcupnyjl5.amplifyapp.com';
+    // Define CORS headers directly
+    const headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Origin,Accept',
+        'Content-Type': 'application/json'
+    };
     logger.debug('Request details', {
         headers: event.headers,
-        body: event.body ? JSON.parse(event.body) : null
+        origin: origin,
+        body: event.body ? (event.body.startsWith('{') ? JSON.parse(event.body) : event.body) : null
     });
+    // Handle OPTIONS requests immediately, before any other processing
+    if (event.httpMethod === 'OPTIONS') {
+        logger.info('Handling OPTIONS preflight request');
+        // Return specific headers for OPTIONS requests
+        return {
+            statusCode: 204,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Origin,Accept',
+                'Access-Control-Max-Age': '86400'
+            },
+            body: ''
+        };
+    }
     try {
         const { httpMethod, body, queryStringParameters } = event;
-        if (httpMethod === 'OPTIONS') {
-            logger.debug('Handling OPTIONS request');
-            return { statusCode: 200, headers, body: '' };
-        }
         switch (httpMethod) {
             case 'POST':
-                const requestData = JSON.parse(body || '');
+                if (!body) {
+                    logger.error('Empty request body');
+                    return { statusCode: 400, headers, body: JSON.stringify({ message: 'Request body is required' }) };
+                }
+                let requestData;
+                try {
+                    requestData = JSON.parse(body);
+                }
+                catch (e) {
+                    logger.error('Invalid JSON in request body', e);
+                    return { statusCode: 400, headers, body: JSON.stringify({ message: 'Invalid JSON in request body' }) };
+                }
                 if (requestData.action === 'store') {
                     logger.info('Processing store action', {
                         recipeId: requestData.recipe.id,
@@ -99,6 +124,8 @@ const handler = async (event) => {
                     return { statusCode: 200, headers, body: JSON.stringify({ message: 'Recipe stored successfully' }) };
                 }
                 if (requestData.action === 'search') {
+                    // Log the full request data for debugging
+                    logger.debug('Search request data', requestData);
                     // Check if searching by title
                     if (requestData.title) {
                         logger.info('Processing title search', { title: requestData.title });
@@ -119,9 +146,25 @@ const handler = async (event) => {
                         });
                         return { statusCode: 200, headers, body: JSON.stringify(results.matches) };
                     }
+                    // Check if embedding exists
+                    if (!requestData.embedding || !Array.isArray(requestData.embedding)) {
+                        logger.error('Missing or invalid embedding in search request', {
+                            hasEmbedding: !!requestData.embedding,
+                            embeddingType: typeof requestData.embedding
+                        });
+                        return {
+                            statusCode: 400,
+                            headers,
+                            body: JSON.stringify({
+                                message: 'Search request requires a valid embedding vector',
+                                requestData: requestData
+                            })
+                        };
+                    }
                     // Search by vector similarity
                     const { embedding, limit = 10, filters } = requestData;
                     logger.info('Processing vector search', {
+                        embeddingLength: embedding.length,
                         limit,
                         filters: filters || 'none'
                     });
@@ -160,7 +203,14 @@ const handler = async (event) => {
                 logger.info('Recipe deleted successfully', { recipeId });
                 return { statusCode: 200, headers, body: JSON.stringify({ message: 'Recipe deleted successfully' }) };
         }
-        logger.info('Invalid request received', { httpMethod, action: JSON.parse(body || '{}').action });
+        let action = '';
+        try {
+            action = body ? JSON.parse(body).action : 'none';
+        }
+        catch (e) {
+            action = 'unparseable';
+        }
+        logger.info('Invalid request received', { httpMethod, action });
         return { statusCode: 400, headers, body: JSON.stringify({ message: 'Invalid request' }) };
     }
     catch (error) {

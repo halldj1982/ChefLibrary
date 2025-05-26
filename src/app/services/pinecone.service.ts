@@ -57,12 +57,21 @@ export class PineconeService {
       dietaryInfo?: string
     }): Observable<any> {
       console.log("Calling Pinecone Lambda Api at url " + this.apiUrl);
-    return this.http.post(this.apiUrl, {
-      action: 'search',
-      embedding,
-      limit,
-      filters
-    });
+      
+      // Validate embedding is an array with proper length
+      if (!Array.isArray(embedding) || embedding.length === 0) {
+        console.error("Invalid embedding format:", embedding);
+        throw new Error("Embedding must be a non-empty array of numbers");
+      }
+      
+      console.log(`Embedding length: ${embedding.length}, Sample: [${embedding.slice(0, 3).join(', ')}...]`);
+      
+      return this.http.post(this.apiUrl, {
+        action: 'search',
+        embedding,
+        limit,
+        filters
+      });
   }
 
   /**

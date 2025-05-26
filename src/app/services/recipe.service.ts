@@ -209,7 +209,14 @@ export class RecipeService {
     return this.openaiService.generateEmbedding(cleanQuery).pipe(
       switchMap(embedding => {
         // Step 3: Search similar recipes in Pinecone with filters
-        console.log("Embedding: " + embedding);
+        console.log("Embedding generated, length: " + embedding.length);
+        
+        // Validate embedding before sending to Pinecone
+        if (!Array.isArray(embedding) || embedding.length === 0) {
+          console.error("Invalid embedding generated:", embedding);
+          throw new Error("Failed to generate valid embedding for search");
+        }
+        
         return this.pineconeService.searchSimilarRecipes(embedding, limit, filters).pipe(
           switchMap(matches => {
             console.log("Matches: " + JSON.stringify(matches));

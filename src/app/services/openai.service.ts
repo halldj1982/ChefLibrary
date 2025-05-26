@@ -103,7 +103,18 @@ export class OpenAIService {
 
     return this.http.post(`${this.apiUrl}/embeddings`, payload, { headers: this.headers })
       .pipe(
-        map((response: any) => response.data[0].embedding)
+        map((response: any) => {
+          const embedding = response.data[0].embedding;
+          
+          // Validate embedding
+          if (!Array.isArray(embedding) || embedding.length === 0) {
+            console.error("Invalid embedding received from OpenAI:", embedding);
+            throw new Error("Failed to generate valid embedding from OpenAI");
+          }
+          
+          console.log(`Generated embedding with length: ${embedding.length}`);
+          return embedding;
+        })
       );
   }
 

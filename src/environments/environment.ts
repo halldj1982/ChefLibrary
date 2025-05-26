@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  pineconeApiUrl: '',
+  pineconeApiUrl: 'https://main.dymhmcupnyjl5.amplifyapp.com/api/pinecone',
   openaiApiKey: '',
   myAwsRegion: '',
   myAwsAccessKeyId: '',
