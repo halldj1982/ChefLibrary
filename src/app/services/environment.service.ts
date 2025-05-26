@@ -10,15 +10,17 @@ export class EnvironmentService {
     // @ts-ignore
     if (window.env && window.env[key]) {
       // @ts-ignore
-      console.log("Current window.env: " + JSON.stringify(window.env));
+      console.log(`Getting env value for ${key}: ${window.env[key]}`);
       // @ts-ignore
       return window.env[key];
     }
 
     if (environment && environment[key]) {
+      console.log(`Getting environment value for ${key}: ${environment[key]}`);
       return environment[key];
     }
     
+    console.log(`No value found for ${key}, using default: ${defaultValue}`);
     return defaultValue;
   }
   
