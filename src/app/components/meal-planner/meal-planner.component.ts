@@ -92,6 +92,13 @@ export class MealPlannerComponent {
     return this.recipes.find(recipe => recipe.id === meal.recipeId);
   }
 
+  // Navigate to recipe detail page
+  viewRecipeDetails(recipe: Recipe): void {
+    if (recipe && recipe.id) {
+      this.router.navigate(['/recipe', recipe.id]);
+    }
+  }
+
   // Helper method to safely get the first meal type
   getMealType(recipe: Recipe): string {
     if (!recipe.mealType) return '';

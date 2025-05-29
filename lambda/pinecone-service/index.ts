@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { Pinecone } from '@pinecone-database/pinecone';
+import { Pinecone, RecordMetadata } from '@pinecone-database/pinecone';
 
 // Configure logging utility
 type Logger = {
@@ -46,30 +46,44 @@ const logger: Logger = {
   }
 };
 
+// Log Pinecone configuration (without sensitive data)
 logger.info('Initializing Pinecone service', {
-  environment: process.env.PINECONE_ENVIRONMENT,
   index: process.env.PINECONE_INDEX,
-  namespace: process.env.PINECONE_NAMESPACE
+  namespace: process.env.PINECONE_NAMESPACE,
+  hasApiKey: !!process.env.PINECONE_API_KEY
 });
 
+// Validate required environment variables
+if (!process.env.PINECONE_API_KEY) {
+  logger.error('Missing PINECONE_API_KEY environment variable');
+}
+if (!process.env.PINECONE_INDEX) {
+  logger.error('Missing PINECONE_INDEX environment variable');
+}
+
+// Initialize Pinecone client - for version 6.0.1
 const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY || '',
-  environment: process.env.PINECONE_ENVIRONMENT || ''
+  apiKey: process.env.PINECONE_API_KEY || ''
 });
 
-const index = pinecone.index(process.env.PINECONE_INDEX || '');
+
+// Get index reference
+const indexName = process.env.PINECONE_INDEX || '';
 const namespace = process.env.PINECONE_NAMESPACE || '';
 
-// Removed getResponseHeaders function as we're handling headers directly in the handler
+const index = pinecone.index(indexName);
 
-export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = async (event: any): Promise<APIGatewayProxyResult> => {
+  // Extract HTTP method from the event structure for HTTP API
+  const httpMethod = event.requestContext?.http?.method || 'UNKNOWN';
+  
   // Log incoming request
   logger.info('Received API request', {
-    httpMethod: event.httpMethod,
-    path: event.path,
-    queryParams: event.queryStringParameters,
+    httpMethod: httpMethod,
+    path: event.rawPath,
+    routeKey: event.routeKey,
     requestId: event.requestContext?.requestId,
-    sourceIp: event.requestContext?.identity?.sourceIp
+    sourceIp: event.requestContext?.http?.sourceIp
   });
   
   // Get origin from request headers
@@ -90,7 +104,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   });
 
   // Handle OPTIONS requests immediately, before any other processing
-  if (event.httpMethod === 'OPTIONS') {
+  if (httpMethod === 'OPTIONS') {
     logger.info('Handling OPTIONS preflight request');
     // Return specific headers for OPTIONS requests
     return { 
@@ -106,7 +120,24 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   }
 
   try {
-    const { httpMethod, body, queryStringParameters } = event;
+    // Verify Pinecone connection before processing requests
+    if (!process.env.PINECONE_API_KEY || !process.env.PINECONE_INDEX) {
+      logger.error('Missing required Pinecone configuration');
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({
+          message: 'Server configuration error: Pinecone not properly configured',
+          details: {
+            hasApiKey: !!process.env.PINECONE_API_KEY,
+            hasIndex: !!process.env.PINECONE_INDEX
+          }
+        })
+      };
+    }
+    
+    const body = event.body;
+    const queryStringParameters = event.queryStringParameters;
 
     switch (httpMethod) {
       case 'POST':
@@ -164,7 +195,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
               }
             };
             
-            const results = await index.namespace(namespace).query(queryParams);
+            const results = await index.namespace(namespace).query({ ...queryParams});
             logger.info('Title search completed', { 
               title: requestData.title,
               resultsCount: results.matches.length 
@@ -215,7 +246,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             }
           }
 
-          const results = await index.namespace(namespace).query(queryParams);
+          const results = await index.namespace(namespace).query({ ...queryParams});
           logger.info('Vector search completed', { resultsCount: results.matches.length });
           return { statusCode: 200, headers, body: JSON.stringify(results.matches) };
         }
@@ -243,6 +274,29 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     logger.info('Invalid request received', { httpMethod, action });
     return { statusCode: 400, headers, body: JSON.stringify({ message: 'Invalid request' }) };
   } catch (error: any) {
+    // Check for Pinecone connection errors specifically
+    if (error.name === 'PineconeConnectionError' || error.message?.includes('Pinecone')) {
+      logger.error('Pinecone connection error', {
+        errorName: error.name,
+        errorMessage: error.message,
+        pineconeConfig: {
+          index: process.env.PINECONE_INDEX,
+          hasApiKey: !!process.env.PINECONE_API_KEY
+        }
+      });
+      
+      return {
+        statusCode: 502,
+        headers,
+        body: JSON.stringify({ 
+          message: 'Error connecting to Pinecone service',
+          details: 'Please check Lambda environment variables and Pinecone service status',
+          requestId: event.requestContext?.requestId
+        })
+      };
+    }
+    
+    // Handle other errors
     logger.error('Error processing request', error);
     return {
       statusCode: 500,

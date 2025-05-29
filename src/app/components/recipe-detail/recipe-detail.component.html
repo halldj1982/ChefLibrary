@@ -1,1 +1,108 @@
-<p>recipe-detail works!</p>
+<div class="container mt-4">
+  <!-- Loading Spinner -->
+  <app-loading-spinner *ngIf="isLoading" message="Loading recipe..."></app-loading-spinner>
+  
+  <!-- Error Message -->
+  <div *ngIf="error && !isLoading" class="alert alert-danger">
+    {{ error }}
+    <div class="mt-3">
+      <button class="btn btn-primary" (click)="goBack()">Back to Recipes</button>
+    </div>
+  </div>
+  
+  <!-- Recipe Details -->
+  <div *ngIf="recipe && !isLoading" class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">{{ recipe.title }}</h2>
+      <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">
+        <i class="bi bi-arrow-left me-1"></i>Back
+      </button>
+    </div>
+    
+    <div class="card-body">
+      <!-- Recipe Metadata -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <p *ngIf="recipe.prepTime"><strong>Prep Time:</strong> {{ recipe.prepTime }}</p>
+          <p *ngIf="recipe.cookTime"><strong>Cook Time:</strong> {{ recipe.cookTime }}</p>
+          <p *ngIf="recipe.totalTime"><strong>Total Time:</strong> {{ recipe.totalTime }}</p>
+        </div>
+        <div class="col-md-6">
+          <p *ngIf="recipe.servings"><strong>Servings:</strong> {{ recipe.servings }}</p>
+          <p *ngIf="recipe.cuisine"><strong>Cuisine:</strong> {{ recipe.cuisine }}</p>
+          <p *ngIf="recipe.mealType && recipe.mealType.length > 0">
+            <strong>Meal Type:</strong> {{ getMealType(recipe) }}
+          </p>
+          <p *ngIf="recipe.dietaryInfo && recipe.dietaryInfo.length > 0">
+            <strong>Dietary Info:</strong> 
+            <span *ngFor="let info of getDietaryInfo(recipe)" class="badge bg-success me-1">{{ info }}</span>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Nutritional Info (if available) -->
+      <div *ngIf="recipe.calories || recipe.protein || recipe.carbs || recipe.fat" class="card mb-4">
+        <div class="card-header">
+          <h5 class="mb-0">Nutritional Information</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3" *ngIf="recipe.calories">
+              <div class="text-center">
+                <h6>Calories</h6>
+                <p class="mb-0">{{ recipe.calories }}</p>
+              </div>
+            </div>
+            <div class="col-md-3" *ngIf="recipe.protein">
+              <div class="text-center">
+                <h6>Protein</h6>
+                <p class="mb-0">{{ recipe.protein }}g</p>
+              </div>
+            </div>
+            <div class="col-md-3" *ngIf="recipe.carbs">
+              <div class="text-center">
+                <h6>Carbs</h6>
+                <p class="mb-0">{{ recipe.carbs }}g</p>
+              </div>
+            </div>
+            <div class="col-md-3" *ngIf="recipe.fat">
+              <div class="text-center">
+                <h6>Fat</h6>
+                <p class="mb-0">{{ recipe.fat }}g</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Ingredients -->
+      <div class="mb-4">
+        <h4>Ingredients</h4>
+        <ul class="list-group">
+          <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">{{ ingredient }}</li>
+        </ul>
+      </div>
+      
+      <!-- Instructions -->
+      <div class="mb-4">
+        <h4>Instructions</h4>
+        <ol class="list-group list-group-numbered">
+          <li class="list-group-item" *ngFor="let step of recipe.instructions">{{ step }}</li>
+        </ol>
+      </div>
+      
+      <!-- Source URL if available -->
+      <div *ngIf="recipe.sourceUrl" class="mb-4">
+        <h5>Source</h5>
+        <a [href]="recipe.sourceUrl" target="_blank" rel="noopener noreferrer">{{ recipe.sourceUrl }}</a>
+      </div>
+      
+      <!-- Delete Button -->
+      <div class="text-end mt-4">
+        <button class="btn btn-danger" (click)="deleteRecipe()">
+          <i class="bi bi-trash me-1"></i>Delete Recipe
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

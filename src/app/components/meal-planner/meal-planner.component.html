@@ -54,23 +54,26 @@
           <div class="card-header bg-primary text-white">
             {{ meal.timeSlot }}
           </div>
-          <div class="card-body">
-            <ng-container *ngIf="getRecipeForMeal(meal)">
-              <h5 class="card-title">{{ getRecipeForMeal(meal)?.title }}</h5>
-              <p class="card-text">
-                <span class="badge bg-secondary me-1" *ngIf="getRecipeForMeal(meal)?.cuisine">
-                  {{ getRecipeForMeal(meal)?.cuisine }}
-                </span>
-                <span class="badge bg-info me-1" *ngIf="getRecipeForMeal(meal)?.mealType">
-                  {{ getMealType(getRecipeForMeal(meal)!) }}
-                </span>
-              </p>
-              <p class="card-text" *ngIf="getRecipeForMeal(meal)?.totalTime">
-                <small class="text-muted">
-                  <i class="bi bi-clock me-1"></i>{{ getRecipeForMeal(meal)?.totalTime }}
-                </small>
-              </p>
-            </ng-container>
+          <div class="card-body" *ngIf="getRecipeForMeal(meal)" 
+               (click)="viewRecipeDetails(getRecipeForMeal(meal)!)" 
+               style="cursor: pointer;">
+            <h5 class="card-title">{{ getRecipeForMeal(meal)?.title }}</h5>
+            <p class="card-text">
+              <span class="badge bg-secondary me-1" *ngIf="getRecipeForMeal(meal)?.cuisine">
+                {{ getRecipeForMeal(meal)?.cuisine }}
+              </span>
+              <span class="badge bg-info me-1" *ngIf="getRecipeForMeal(meal)?.mealType">
+                {{ getMealType(getRecipeForMeal(meal)!) }}
+              </span>
+            </p>
+            <p class="card-text" *ngIf="getRecipeForMeal(meal)?.totalTime">
+              <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>{{ getRecipeForMeal(meal)?.totalTime }}
+              </small>
+            </p>
+            <div class="text-end">
+              <small class="text-primary">Click to view details</small>
+            </div>
           </div>
         </div>
       </div>

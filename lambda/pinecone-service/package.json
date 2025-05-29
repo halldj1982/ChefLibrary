@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@pinecone-database/pinecone": "^1.1.0",
+    "@pinecone-database/pinecone": "^6.0.1",
     "aws-lambda": "^1.0.7"
   },
   "devDependencies": {
