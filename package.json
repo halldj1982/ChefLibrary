@@ -20,7 +20,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
-    "@aws-amplify/auth": "^6.13.0",
+    "@aws-amplify/auth": "^5.3.11",
     "@pinecone-database/pinecone": "^5.1.0",
     "aws-amplify": "^5.3.11",
     "aws-sdk": "^2.1692.0",
