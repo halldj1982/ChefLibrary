@@ -9,14 +9,6 @@
             Upload photos of your favorite recipes, extract the text using AI, and organize them in a searchable database.
             Create meal plans and never wonder "what's for dinner?" again.
           </p>
-          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-            <button type="button" class="btn btn-primary btn-lg px-4 me-md-2" (click)="navigateTo('/upload')">
-              <i class="bi bi-upload me-2"></i>Upload Recipe
-            </button>
-            <button type="button" class="btn btn-outline-secondary btn-lg px-4" (click)="navigateTo('/search')">
-              <i class="bi bi-search me-2"></i>Search Recipes
-            </button>
-          </div>
         </div>
         <div class="col-lg-6 mt-5 mt-lg-0">
           <img src="assets/recipe-hero.jpg" alt="Recipe Book" class="img-fluid rounded shadow-lg">
@@ -25,54 +17,23 @@
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features-section py-5">
+  <!-- Login Section -->
+  <section class="login-section py-5">
     <div class="container">
-      <h2 class="text-center mb-5">How It Works</h2>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body text-center">
-              <div class="feature-icon mb-3">
-                <i class="bi bi-camera-fill"></i>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body p-4">
+              <h2 class="text-center mb-4">Log In to Get Started</h2>
+              <app-login></app-login>
+              <div class="text-center mt-3">
+                <p>Don't have an account? <a routerLink="/register">Sign up</a></p>
+                <p><a routerLink="/how-it-works">Learn how it works</a></p>
               </div>
-              <h3 class="card-title">Upload Photos</h3>
-              <p class="card-text">Take photos of your recipe cards, cookbook pages, or handwritten recipes and upload them.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body text-center">
-              <div class="feature-icon mb-3">
-                <i class="bi bi-magic"></i>
-              </div>
-              <h3 class="card-title">AI Extraction</h3>
-              <p class="card-text">Our AI powered by OpenAI's vision capabilities extracts and structures the recipe content.</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100">
-            <div class="card-body text-center">
-              <div class="feature-icon mb-3">
-                <i class="bi bi-search"></i>
-              </div>
-              <h3 class="card-title">Search & Plan</h3>
-              <p class="card-text">Search your recipes using natural language and create weekly meal plans with ease.</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Call to Action -->
-  <section class="cta-section py-5 bg-light">
-    <div class="container text-center">
-      <h2 class="mb-4">Ready to organize your recipes?</h2>
-      <p class="lead mb-4">Start uploading your recipes today and experience the power of AI-assisted recipe management.</p>
-      <button type="button" class="btn btn-primary btn-lg" (click)="navigateTo('/upload')">Get Started Now</button>
     </div>
   </section>
 </div>

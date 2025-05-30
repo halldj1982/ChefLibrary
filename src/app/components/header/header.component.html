@@ -12,7 +12,9 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuCollapsed = true">Home</a>
         </li>
-        <!-- Move Search Recipes to authenticated section -->
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/how-it-works" routerLinkActive="active" (click)="isMenuCollapsed = true">How It Works</a>
+        </li>
         
         <!-- Authenticated Menu Items -->
         <ng-container *ngIf="isAuthenticated">
@@ -30,28 +32,23 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/settings" routerLinkActive="active" (click)="isMenuCollapsed = true">
-              <i class="bi bi-gear"></i>
+              <i class="bi bi-gear"></i> Settings
             </a>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-person-circle me-1"></i>{{ userName || 'Account' }}
+          <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0)" (click)="logout(); isMenuCollapsed = true">
+              <i class="bi bi-box-arrow-right"></i> Logout
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" routerLink="/settings">Profile Settings</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="javascript:void(0)" (click)="logout()">Logout</a></li>
-            </ul>
           </li>
         </ng-container>
         
         <!-- Unauthenticated Menu Items -->
         <ng-container *ngIf="!isAuthenticated">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/login" routerLinkActive="active" (click)="isMenuCollapsed = true">Login</a>
+            <a class="nav-link btn btn-primary px-3 mx-1" routerLink="/login" routerLinkActive="active" (click)="isMenuCollapsed = true">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link btn btn-outline-light btn-sm mt-1" routerLink="/register" routerLinkActive="active" (click)="isMenuCollapsed = true">Sign Up</a>
+            <a class="nav-link btn btn-primary px-3 mx-1" routerLink="/register" routerLinkActive="active" (click)="isMenuCollapsed = true">Sign Up</a>
           </li>
         </ng-container>
       </ul>

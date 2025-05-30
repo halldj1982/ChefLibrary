@@ -1,60 +1,40 @@
-.hero-section {
-  padding: 5rem 0;
+.home-container {
   background-color: #f8f9fa;
+}
+
+.hero-section {
+  padding: 4rem 0;
+  background-color: #fff;
+}
+
+.login-section {
+  background-color: #f8f9fa;
+  padding: 3rem 0 5rem;
+}
+
+h1 {
+  color: #333;
+  font-weight: 700;
+}
+
+.lead {
+  color: #555;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 0;
+    text-align: center;
+  }
   
   h1 {
-    color: #2d3748;
-    line-height: 1.2;
-  }
-  
-  .lead {
-    color: #4a5568;
-  }
-  
-  img {
-    max-height: 400px;
-    object-fit: cover;
-  }
-}
-
-.features-section {
-  padding: 5rem 0;
-  
-  .feature-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 4rem;
-    height: 4rem;
-    margin-bottom: 1rem;
     font-size: 2rem;
-    color: #fff;
-    background-color: #4a6fa5;
-    border-radius: 50%;
   }
-  
-  .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
-    &:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-    }
-  }
-  
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-}
-
-.cta-section {
-  background-color: #e9ecef;
-  padding: 5rem 0;
-  border-radius: 10px;
-  margin: 2rem 0;
 }

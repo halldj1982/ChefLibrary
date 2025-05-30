@@ -9,6 +9,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password.component';
+import { HowItWorksComponent } from './components/how-it-works/how-it-works.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -16,6 +17,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'how-it-works', component: HowItWorksComponent },
   { path: 'upload', component: RecipeUploadComponent, canActivate: [AuthGuard] },
   { path: 'search', component: RecipeSearchComponent, canActivate: [AuthGuard] },
   { path: 'recipe/:id', component: RecipeDetailComponent, canActivate: [AuthGuard] },
