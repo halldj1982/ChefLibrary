@@ -8,7 +8,7 @@ import { AppComponent } from './app/app.component';
 import { Amplify } from 'aws-amplify';
 import { environment } from './environments/environment';
 
-// Configure AWS Amplify with type assertion to avoid TypeScript errors
+// Configure AWS Amplify
 Amplify.configure({
   Auth: {
     region: environment.myAwsRegion,
@@ -16,7 +16,7 @@ Amplify.configure({
     userPoolWebClientId: environment.cognitoClientId,
     identityPoolId: environment.cognitoIdentityPoolId
   }
-} as any);
+});
 
 bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));
