@@ -13,12 +13,7 @@ body {
 .card {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
   margin-bottom: 20px;
-}
-
-.card:hover {
-  transform: translateY(-5px);
 }
 
 .btn-primary {
@@ -29,6 +24,12 @@ body {
 .btn-primary:hover {
   background-color: #3a5a8a;
   border-color: #3a5a8a;
+}
+
+/* Fix for form fields moving on hover */
+input, select, textarea, .form-control {
+  transition: none !important;
+  transform: none !important;
 }
 
 .form-control:focus {
@@ -87,6 +88,18 @@ body {
   justify-content: center;
   align-items: center;
   height: 200px;
+}
+
+/* Prevent any hover effects that cause movement */
+.auth-card:hover,
+.card:hover,
+.form-group:hover,
+.form-control:hover,
+input:hover,
+select:hover,
+textarea:hover,
+button:hover {
+  transform: none !important;
 }
 
 @media (max-width: 768px) {
