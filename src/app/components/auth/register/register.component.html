@@ -1,0 +1,172 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Registration Form -->
+    <div *ngIf="!showConfirmation">
+      <div class="auth-header">
+        <h2>Create Account</h2>
+        <p>Sign up to get started with ChefLib</p>
+      </div>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="alert alert-danger" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="alert alert-success" *ngIf="successMessage">
+          {{ successMessage }}
+        </div>
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['name'].touched && f['name'].errors }"
+            placeholder="Enter your full name"
+            autocomplete="name"
+          />
+          <div *ngIf="f['name'].touched && f['name'].errors" class="invalid-feedback">
+            <div *ngIf="f['name'].errors['required']">Name is required</div>
+            <div *ngIf="f['name'].errors['minlength']">Name must be at least 2 characters</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['email'].touched && f['email'].errors }"
+            placeholder="Enter your email"
+            autocomplete="email"
+          />
+          <div *ngIf="f['email'].touched && f['email'].errors" class="invalid-feedback">
+            <div *ngIf="f['email'].errors['required']">Email is required</div>
+            <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['password'].touched && f['password'].errors }"
+            placeholder="Create a password"
+            autocomplete="new-password"
+          />
+          <div *ngIf="f['password'].touched && f['password'].errors" class="invalid-feedback">
+            <div *ngIf="f['password'].errors['required']">Password is required</div>
+            <div *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</div>
+            <div *ngIf="f['password'].errors['pattern']">
+              Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character
+            </div>
+          </div>
+          <small class="form-text text-muted">
+            Password must be at least 8 characters and include uppercase, lowercase, numbers, and special characters.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': f['confirmPassword'].touched && f['confirmPassword'].errors }"
+            placeholder="Confirm your password"
+            autocomplete="new-password"
+          />
+          <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].errors" class="invalid-feedback">
+            <div *ngIf="f['confirmPassword'].errors['required']">Please confirm your password</div>
+            <div *ngIf="f['confirmPassword'].errors['mustMatch']">Passwords must match</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="registerForm.invalid || isSubmitting"
+          >
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Create Account
+          </button>
+        </div>
+
+        <div class="auth-footer">
+          <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+        </div>
+      </form>
+    </div>
+
+    <!-- Confirmation Form -->
+    <div *ngIf="showConfirmation">
+      <div class="auth-header">
+        <h2>Verify Your Email</h2>
+        <p>We've sent a verification code to <strong>{{ email }}</strong></p>
+      </div>
+
+      <form [formGroup]="confirmationForm" (ngSubmit)="onConfirmSubmit()" class="auth-form">
+        <div class="alert alert-danger" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <div class="alert alert-success" *ngIf="successMessage">
+          {{ successMessage }}
+        </div>
+
+        <div class="form-group">
+          <label for="code">Verification Code</label>
+          <input
+            type="text"
+            id="code"
+            formControlName="code"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': c['code'].touched && c['code'].errors }"
+            placeholder="Enter 6-digit code"
+            autocomplete="off"
+          />
+          <div *ngIf="c['code'].touched && c['code'].errors" class="invalid-feedback">
+            <div *ngIf="c['code'].errors['required']">Verification code is required</div>
+            <div *ngIf="c['code'].errors['minlength'] || c['code'].errors['maxlength']">
+              Verification code must be 6 digits
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="confirmationForm.invalid || isSubmitting"
+          >
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Verify Account
+          </button>
+        </div>
+
+        <div class="auth-footer">
+          <p>
+            Didn't receive the code? 
+            <a href="javascript:void(0)" (click)="resendCode()" [class.disabled]="isSubmitting">
+              Resend code
+            </a>
+          </p>
+          <p *ngIf="!email.includes('needsConfirmation')">
+            <a href="javascript:void(0)" (click)="backToRegister()">
+              Back to registration
+            </a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

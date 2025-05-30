@@ -13,22 +13,46 @@
           <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuCollapsed = true">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/upload" routerLinkActive="active" (click)="isMenuCollapsed = true">Upload Recipe</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" routerLink="/search" routerLinkActive="active" (click)="isMenuCollapsed = true">Search Recipes</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/meal-planner" routerLinkActive="active" (click)="isMenuCollapsed = true">Meal Planner</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/saved-meal-plans" routerLinkActive="active" (click)="isMenuCollapsed = true">Saved Plans</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/settings" routerLinkActive="active" (click)="isMenuCollapsed = true">
-            <i class="bi bi-gear"></i>
-          </a>
-        </li>
+        
+        <!-- Authenticated Menu Items -->
+        <ng-container *ngIf="isAuthenticated">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/upload" routerLinkActive="active" (click)="isMenuCollapsed = true">Upload Recipe</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/meal-planner" routerLinkActive="active" (click)="isMenuCollapsed = true">Meal Planner</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/saved-meal-plans" routerLinkActive="active" (click)="isMenuCollapsed = true">Saved Plans</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/settings" routerLinkActive="active" (click)="isMenuCollapsed = true">
+              <i class="bi bi-gear"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>{{ userName || 'Account' }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" routerLink="/settings">Profile Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="javascript:void(0)" (click)="logout()">Logout</a></li>
+            </ul>
+          </li>
+        </ng-container>
+        
+        <!-- Unauthenticated Menu Items -->
+        <ng-container *ngIf="!isAuthenticated">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" routerLinkActive="active" (click)="isMenuCollapsed = true">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-light btn-sm mt-1" routerLink="/register" routerLinkActive="active" (click)="isMenuCollapsed = true">Sign Up</a>
+          </li>
+        </ng-container>
       </ul>
     </div>
   </div>

@@ -5,5 +5,9 @@ export const environment = {
   myAwsRegion: '',
   myAwsAccessKeyId: '',
   myAwsSecretAccessKey: '',
-  dynamoDbTable: ''
+  dynamoDbTable: '',
+  // Cognito configuration
+  cognitoUserPoolId: '',
+  cognitoClientId: '',
+  cognitoIdentityPoolId: ''
 };
