@@ -1,15 +1,33 @@
 .home-container {
   background-color: #f8f9fa;
+  overflow-x: hidden;
 }
 
-.hero-section {
-  padding: 4rem 0;
-  background-color: #fff;
+.vh-100 {
+  min-height: 100vh;
 }
 
-.login-section {
+.hero-content {
+  max-width: 700px;
+}
+
+.hero-image {
+  max-height: 300px;
+  margin-top: 2rem;
+}
+
+.login-column {
   background-color: #f8f9fa;
-  padding: 3rem 0 5rem;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.login-wrapper {
+  padding: 2rem;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
 }
 
 h1 {
@@ -23,18 +41,28 @@ h1 {
   line-height: 1.6;
 }
 
-.card {
-  border: none;
-  border-radius: 10px;
+.signup-link {
+  color: #0056b3;
+  font-weight: 600;
 }
 
-@media (max-width: 768px) {
-  .hero-section {
-    padding: 2rem 0;
+/* Mobile styles */
+@media (max-width: 767.98px) {
+  .vh-100 {
+    min-height: auto;
+  }
+  
+  .hero-content {
     text-align: center;
+    padding: 2rem 1rem;
   }
   
   h1 {
     font-size: 2rem;
+  }
+  
+  .login-column {
+    box-shadow: none;
+    padding-bottom: 3rem;
   }
 }

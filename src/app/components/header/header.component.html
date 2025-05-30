@@ -45,10 +45,10 @@
         <!-- Unauthenticated Menu Items -->
         <ng-container *ngIf="!isAuthenticated">
           <li class="nav-item">
-            <a class="nav-link btn btn-primary px-3 mx-1" routerLink="/login" routerLinkActive="active" (click)="isMenuCollapsed = true">Login</a>
+            <a class="nav-link btn btn-success text-white px-3 mx-1" routerLink="/login" routerLinkActive="active" (click)="isMenuCollapsed = true">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link btn btn-primary px-3 mx-1" routerLink="/register" routerLinkActive="active" (click)="isMenuCollapsed = true">Sign Up</a>
+            <a class="nav-link btn btn-dark text-white px-3 mx-1" routerLink="/register" routerLinkActive="active" (click)="isMenuCollapsed = true">Sign Up</a>
           </li>
         </ng-container>
       </ul>

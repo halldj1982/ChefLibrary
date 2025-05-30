@@ -2,6 +2,7 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
+  overflow-x: hidden;
 }
 
 .container {
@@ -24,6 +25,26 @@ body {
 .btn-primary:hover {
   background-color: #3a5a8a;
   border-color: #3a5a8a;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.btn-dark {
+  background-color: #0a3d62;
+  border-color: #0a3d62;
+}
+
+.btn-dark:hover {
+  background-color: #072f4a;
+  border-color: #072f4a;
 }
 
 /* Fix for form fields moving on hover */
@@ -102,6 +123,7 @@ button:hover {
   transform: none !important;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .container {
     padding: 10px;
