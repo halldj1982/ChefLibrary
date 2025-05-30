@@ -8,5 +8,8 @@ window.env = {
   myAwsRegion: '',
   myAwsAccessKeyId: '',
   myAwsSecretAccessKey: '',
-  dynamoDbTable: ''
+  dynamoDbTable: '',
+  cognitoUserPoolId: '',
+  cognitoClientId: '',
+  cognitoIdentityPoolId: ''
 };

@@ -11,6 +11,9 @@ echo "pineconeNamespace: $pineconeNamespace"
 echo "pineconeApiUrl: $pineconeApiUrl"
 echo "myAwsRegion: $myAwsRegion"
 echo "dynamoDbTable: $dynamoDbTable"
+echo "COGNITO_USER_POOL_ID: $COGNITO_USER_POOL_ID"
+echo "COGNITO_CLIENT_ID: $COGNITO_CLIENT_ID"
+echo "COGNITO_IDENTITY_POOL_ID: $COGNITO_IDENTITY_POOL_ID"
 echo "=================================================="
 
 # Create env-config.js with proper escaping
@@ -24,7 +27,10 @@ window.env = {
   myAwsRegion: "${myAwsRegion:-''}",
   myAwsAccessKeyId: "${myAwsAccessKeyId:-''}",
   myAwsSecretAccessKey: "${myAwsSecretAccessKey:-''}",
-  dynamoDbTable: "${dynamoDbTable:-''}"
+  dynamoDbTable: "${dynamoDbTable:-''}",
+  cognitoUserPoolId: "${COGNITO_USER_POOL_ID:-''}",
+  cognitoClientId: "${COGNITO_CLIENT_ID:-''}",
+  cognitoIdentityPoolId: "${COGNITO_IDENTITY_POOL_ID:-''}"
 };
 EOF
 

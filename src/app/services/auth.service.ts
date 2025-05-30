@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, from } from 'rxjs';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { Auth } from 'aws-amplify';
 
 @Injectable({
   providedIn: 'root'
@@ -26,159 +27,84 @@ export class AuthService {
 
   async checkAuthStatus(): Promise<void> {
     try {
-      // Check if there's a user in localStorage
-      const userJson = localStorage.getItem('currentUser');
-      if (userJson) {
-        this._currentUser = JSON.parse(userJson);
-        this._isAuthenticated.next(true);
-      } else {
-        this._isAuthenticated.next(false);
-      }
+      // Check if user is authenticated with Cognito
+      const user = await Auth.currentAuthenticatedUser();
+      this._currentUser = user;
+      this._isAuthenticated.next(true);
     } catch (error) {
       this._isAuthenticated.next(false);
+      this._currentUser = null;
     } finally {
       this._authStatusChecked = true;
     }
   }
 
   signUp(email: string, password: string, name: string): Promise<any> {
-    // Mock sign up functionality
-    return new Promise((resolve) => {
-      // In a real implementation, this would call Cognito
-      const user = {
-        username: email,
-        attributes: {
-          email,
-          name
-        }
-      };
-      
-      setTimeout(() => {
-        resolve({ user });
-      }, 500);
+    return Auth.signUp({
+      username: email,
+      password,
+      attributes: {
+        email,
+        name
+      }
     });
   }
 
   confirmSignUp(email: string, code: string): Promise<any> {
-    // Mock confirm sign up functionality
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.confirmSignUp(email, code);
   }
 
   resendConfirmationCode(email: string): Promise<any> {
-    // Mock resend confirmation code functionality
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.resendSignUp(email);
   }
 
   signIn(email: string, password: string): Promise<any> {
-    // Mock sign in functionality
-    return new Promise((resolve, reject) => {
-      // In a real implementation, this would call Cognito
-      if (email && password) {
-        const user = {
-          username: email,
-          attributes: {
-            email,
-            name: 'User'
-          }
-        };
-        
+    return Auth.signIn(email, password)
+      .then(user => {
         this._currentUser = user;
-        localStorage.setItem('currentUser', JSON.stringify(user));
         this._isAuthenticated.next(true);
-        
-        setTimeout(() => {
-          resolve(user);
-        }, 500);
-      } else {
-        reject(new Error('Invalid credentials'));
-      }
-    });
+        return user;
+      });
   }
 
   signOut(): Promise<any> {
-    // Mock sign out functionality
-    return new Promise((resolve) => {
-      this._currentUser = null;
-      localStorage.removeItem('currentUser');
-      this._isAuthenticated.next(false);
-      
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.signOut()
+      .then(() => {
+        this._currentUser = null;
+        this._isAuthenticated.next(false);
+      });
   }
 
   forgotPassword(email: string): Promise<any> {
-    // Mock forgot password functionality
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.forgotPassword(email);
   }
 
   forgotPasswordSubmit(email: string, code: string, newPassword: string): Promise<any> {
-    // Mock forgot password submit functionality
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.forgotPasswordSubmit(email, code, newPassword);
   }
 
   changePassword(oldPassword: string, newPassword: string): Promise<any> {
-    // Mock change password functionality
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.currentAuthenticatedUser()
+      .then(user => {
+        return Auth.changePassword(user, oldPassword, newPassword);
+      });
   }
 
   getCurrentUser(): Promise<any> {
-    // Mock get current user functionality
-    return new Promise((resolve, reject) => {
-      if (this._currentUser) {
-        resolve(this._currentUser);
-      } else {
-        reject(new Error('No current user'));
-      }
-    });
+    return Auth.currentAuthenticatedUser();
   }
 
   getUserAttributes(): Promise<any> {
-    // Mock get user attributes functionality
-    return new Promise((resolve, reject) => {
-      if (this._currentUser) {
-        resolve(this._currentUser.attributes);
-      } else {
-        reject(new Error('No current user'));
-      }
-    });
+    return Auth.currentAuthenticatedUser()
+      .then(user => {
+        return Auth.userAttributes(user);
+      });
   }
 
   updateUserAttributes(attributes: Record<string, string>): Promise<any> {
-    // Mock update user attributes functionality
-    return new Promise((resolve) => {
-      if (this._currentUser) {
-        this._currentUser.attributes = {
-          ...this._currentUser.attributes,
-          ...attributes
-        };
-        localStorage.setItem('currentUser', JSON.stringify(this._currentUser));
-      }
-      
-      setTimeout(() => {
-        resolve({ success: true });
-      }, 500);
-    });
+    return Auth.currentAuthenticatedUser()
+      .then(user => {
+        return Auth.updateUserAttributes(user, attributes);
+      });
   }
 }
