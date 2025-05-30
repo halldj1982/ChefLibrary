@@ -12,12 +12,13 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="isMenuCollapsed = true">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/search" routerLinkActive="active" (click)="isMenuCollapsed = true">Search Recipes</a>
-        </li>
+        <!-- Move Search Recipes to authenticated section -->
         
         <!-- Authenticated Menu Items -->
         <ng-container *ngIf="isAuthenticated">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/search" routerLinkActive="active" (click)="isMenuCollapsed = true">Search Recipes</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/upload" routerLinkActive="active" (click)="isMenuCollapsed = true">Upload Recipe</a>
           </li>

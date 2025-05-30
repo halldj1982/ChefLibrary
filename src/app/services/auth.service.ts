@@ -63,6 +63,8 @@ export class AuthService {
       .then(user => {
         this._currentUser = user;
         this._isAuthenticated.next(true);
+        // Force a re-check of auth status to ensure everything is updated
+        this._authStatusChecked = true;
         return user;
       });
   }
@@ -72,6 +74,8 @@ export class AuthService {
       .then(() => {
         this._currentUser = null;
         this._isAuthenticated.next(false);
+        // Force a re-check of auth status on next navigation
+        this._authStatusChecked = false;
       });
   }
 

@@ -22,10 +22,13 @@ export class HeaderComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
+    // Subscribe to authentication state changes
     this.authService.isAuthenticated.subscribe(isAuthenticated => {
       this.isAuthenticated = isAuthenticated;
       if (isAuthenticated) {
         this.getUserName();
+      } else {
+        this.userName = '';
       }
     });
   }
@@ -49,6 +52,9 @@ export class HeaderComponent implements OnInit {
   logout() {
     this.authService.signOut()
       .then(() => {
+        // Force update the authentication state
+        this.isAuthenticated = false;
+        this.userName = '';
         this.router.navigate(['/login']);
       })
       .catch(error => {

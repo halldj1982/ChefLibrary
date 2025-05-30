@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { Amplify } from 'aws-amplify';
 import { environment } from '../environments/environment';
+import { AuthService } from './services/auth.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +16,11 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent implements OnInit {
   title = 'Recipe Extractor App';
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     // Configure AWS Amplify
@@ -31,6 +38,13 @@ export class AppComponent implements OnInit {
       userPoolId: environment.cognitoUserPoolId,
       userPoolWebClientId: environment.cognitoClientId,
       identityPoolId: environment.cognitoIdentityPoolId
+    });
+
+    // Check auth status on each navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.authService.checkAuthStatus();
     });
   }
 }
