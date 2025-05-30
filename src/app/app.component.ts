@@ -40,7 +40,9 @@ export class AppComponent implements OnInit {
       identityPoolId: environment.cognitoIdentityPoolId
     });
 
-    // Check auth status on each navigation
+    // Check auth status on each navigation and on initial load
+    this.authService.checkAuthStatus();
+    
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {

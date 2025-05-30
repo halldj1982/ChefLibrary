@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Get return URL from route parameters or default to '/'
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // Get return URL from route parameters or default to '/upload'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/upload';
   }
 
   // Getter for easy access to form fields
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.signIn(email, password)
       .then(() => {
-        this.router.navigate([this.returnUrl]);
+        this.router.navigate(['/upload']);
       })
       .catch(error => {
         console.error('Login error:', error);

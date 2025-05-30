@@ -35,10 +35,15 @@
               <i class="bi bi-gear"></i> Settings
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0)" (click)="logout(); isMenuCollapsed = true">
-              <i class="bi bi-box-arrow-right"></i> Logout
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>{{ userName || 'Account' }}
             </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" routerLink="/settings">Profile Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="javascript:void(0)" (click)="logout(); isMenuCollapsed = true">Logout</a></li>
+            </ul>
           </li>
         </ng-container>
         

@@ -31,6 +31,13 @@ export class HeaderComponent implements OnInit {
         this.userName = '';
       }
     });
+    
+    // Force check auth status on component init
+    this.authService.checkAuthStatus().then(() => {
+      if (this.isAuthenticated) {
+        this.getUserName();
+      }
+    });
   }
   
   toggleMenu() {
@@ -43,6 +50,12 @@ export class HeaderComponent implements OnInit {
       const nameAttribute = attributes.find((attr: any) => attr.Name === 'name');
       if (nameAttribute) {
         this.userName = nameAttribute.Value;
+      } else {
+        // Fallback to email if name is not available
+        const emailAttribute = attributes.find((attr: any) => attr.Name === 'email');
+        if (emailAttribute) {
+          this.userName = emailAttribute.Value;
+        }
       }
     } catch (error) {
       console.error('Error getting user attributes:', error);
